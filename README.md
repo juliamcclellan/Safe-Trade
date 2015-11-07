@@ -1,9 +1,9 @@
 # Safe-Trade
 
-Case Study and Lab: Stock Exchange from "Java Solutions" (Litvin/Litvin)
+Case Study and Lab: Stock Exchange from "Java Methods" (Litvin/Litvin)
 
 ### Authors
 Luke Giacalone,
 Ben Kelly,
-~~Julia McClellan~~,
+Julia McClellan,
 Shannon Wing
