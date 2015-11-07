@@ -1,3 +1,5 @@
+//CODE PROVIDED BY LITVIN/LITVIN
+
 /**
  * Specifies methods for registering and logging in users.
  */
