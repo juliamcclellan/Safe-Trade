@@ -8,7 +8,7 @@
 
 import java.util.Comparator;
 
-public class PriceComparator implements Comparator {
+public class PriceComparator implements Comparator<TradeOrder> {
 	
 	private boolean ascending;
 	
@@ -27,9 +27,9 @@ public class PriceComparator implements Comparator {
 	//-1 if order1 is market and order2 is limit;
 	//1 if order1 is limit and order2 is market;
 	public int compare(TradeOrder order1, TradeOrder order2) {
-		if(order1.isMarket() && order2.isMarker())
+		if(order1.isMarket() && order2.isMarket())
 			return 0;
-		else if(order1.isMarket() && !order2.isMarker())
+		else if(order1.isMarket() && !order2.isMarket())
 			return -1;
 		else
 			return 1;

@@ -55,7 +55,7 @@ public class Trader implements Comparable<Trader> {
 	public void openWindow() {
 		myWindow = new TraderWindow(this);
 		for(String msg: mailbox)
-			myWindow.show(msg);
+			myWindow.showMessage(msg);
 		while(mailbox.size() != 0)
 			mailbox.remove(0);
 	}
@@ -70,8 +70,8 @@ public class Trader implements Comparable<Trader> {
 	public void receiveMessage(String msg) {
 		mailbox.add(msg);
 		if(myWindow != null) {
-			for(String msg: mailbox)
-				myWindow.showMessage(msg);
+			for(String message: mailbox)
+				myWindow.showMessage(message);
 			while(mailbox.size() > 0)
 				mailbox.remove(0);
 		}

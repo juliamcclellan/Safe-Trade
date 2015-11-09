@@ -7,7 +7,8 @@ public class TradeOrder {
 	int shares;
 	double price;
 
-//Constructs a new TradeOrder for a given trader, stock symbol, a number of shares, and other parameters.
+//Constructor that takes in the trader, symbol, price, number of shares, whether or not it is a buy order, 
+// and whether or not it is a market order
 	TradeOrder(Trader trader, java.lang.String symbol, 
 			boolean buyOrder, boolean marketOrder, int numShares, double price)
    {
@@ -51,7 +52,6 @@ public class TradeOrder {
 		return marketOrder;
 	}
 
-//Subtracts a given number of shares from the total number of shares in this trade order.
 	public void subtractShares(int shares) {
 		this.shares = this.shares - shares;
 	}
