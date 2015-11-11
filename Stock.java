@@ -19,6 +19,10 @@ public class Stock {
 	public String getQuote(){
 		TradeOrder highBuy = null;
 		Iterator<TradeOrder> iter = buyOrders.iterator();
+		if(iter.hasNext())
+		{
+			highBuy = iter.next();
+		}
 		while(iter.hasNext()){
 			TradeOrder order = iter.next();
 			if(order.getPrice() > highBuy.getPrice())

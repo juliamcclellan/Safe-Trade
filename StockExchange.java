@@ -22,7 +22,12 @@ public class StockExchange {
 	
 	//Returns a quote for a given stock.
 	public String getQuote(java.lang.String symbol) {
-		return stocks.get(symbol).getQuote();
+		Stock stock = stocks.get(symbol);
+		if(stock == null)
+		{
+			return "Not a valid symbol";
+		}
+		return stock.getQuote();
 	}
 	
 	//Places a trade order by calling stock.placeOrder for the stock specified by the stock symbol in the trade order.
