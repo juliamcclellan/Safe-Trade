@@ -1,8 +1,9 @@
 /*
+ * File: Brokerage.java
+ * Name: Giacalone/Kelly/McClellan/Wing
+ * Date: 11/11/2015
+ * ------------------------------------
  * Represents a Brokerage which keeps track or registered traders and logged-in traders. Receives requests from traders and relays them to the StockExchange.
- * 
- * Authors: Giacalone/Kelly/McClellan/Wing
- * Version: 11/07/15
  */
 
 import java.util.TreeMap;
