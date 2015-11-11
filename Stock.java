@@ -35,6 +35,10 @@ public class Stock {
 			highestBuy = "Bid: " + highBuy.getPrice() + "size: " + highBuy.getShares();
 		TradeOrder lowSell = null;
 		iter = sellOrders.iterator();
+		if(iter.hasNext())
+		{
+			lowSell = iter.next();
+		}
 		while(iter.hasNext()){
 			TradeOrder order = iter.next();
 			if(order.getPrice() > lowSell.getPrice())
@@ -45,7 +49,7 @@ public class Stock {
 			lowestSell = "Ask: none";
 		else
 			lowestSell = "Ask: " + highBuy.getPrice() + "size: " + highBuy.getShares();
-		return name + " (" + symbol + ")\nPrice: " + lastPrice + " hi: " + highPrice + " lo: " + lastPrice
+		return name + " (" + symbol + ")\nPrice: " + lastPrice + " hi: " + highPrice + " lo: " + lowPrice
 				+ " vol: " + volume + "\n" + highestBuy + " " + lowestSell;
 	}
 	public void placeOrder(TradeOrder order){
