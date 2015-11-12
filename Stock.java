@@ -16,9 +16,9 @@ public class Stock {
 	private PriorityQueue<TradeOrder> sellOrders, buyOrders;
 	
 	/*
-	 * Constructs a new stock with a given symbol, company name, and starting price. Sets low price, high price, and last price to the same opening price. Sets 
-	 * "day" volume to zero. Initializes a priority queue for sell orders to an empty PriorityQueue with a PriceComparator configured for comparing orders in 
-	 * ascending order; initializes a priority queue for buy orders to an empty PriorityQueue with a PriceComparator configured for comparing orders in 
+	 * Constructs a new stock with a given symbol, company name, and starting price. Sets low price, high price, and last price to the same opening price. 
+	 * Sets "day" volume to zero. Initializes a priority queue for sell orders to an empty PriorityQueue with a PriceComparator configured for comparing orders
+	 * in ascending order; initializes a priority queue for buy orders to an empty PriorityQueue with a PriceComparator configured for comparing orders in 
 	 * descending order.
 	 */
 	public Stock(String symbol, String name, double price){
@@ -33,9 +33,9 @@ public class Stock {
 	}
 	
 	/*
-	 * Returns a quote string for this stock. The quote includes: the company name for this stock; the stock symbol; last sale price; the lowest and highest day
-	 * prices; the lowest price in a sell order (or "market") and the number of shares in it (or "none" if there are no sell orders); the highest price in a 
-	 * buy order (or "market") and the number of shares in it (or "none" if there are no buy orders)
+	 * Returns a quote string for this stock. The quote includes: the company name for this stock; the stock symbol; last sale price; the lowest and highest 
+	 * day prices; the lowest price in a sell order (or "market") and the number of shares in it (or "none" if there are no sell orders); the highest price in 
+	 * a buy order (or "market") and the number of shares in it (or "none" if there are no buy orders)
 	 */
 	public String getQuote(){
 		TradeOrder highBuy = null;
@@ -101,6 +101,54 @@ public class Stock {
 	 */
 	private void executeOrders()
 	{
+		if(sellOrders.size() == 0 || buyOrders.size() == 0) return;
 		
+		Iterator<TradeOrder> buyIterator = buyOrders.iterator();
+		for(TradeOrder buy = buyIterator.next(); buyIterator.hasNext() && sellOrders.size() != 0; buy = buyIterator.next())
+		{
+			double buyPrice;
+			if(buy.isLimit()) buyPrice = buy.getPrice();
+			else buyPrice = lowPrice;
+			boolean complete = false;
+			Iterator<TradeOrder> sellIterator = sellOrders.iterator();
+			for(TradeOrder sell = sellIterator.next(); sellIterator.hasNext() && !complete; sell = sellIterator.next())
+			{
+				double sellPrice;
+				if(sell.isLimit()) sellPrice = sell.getPrice();
+				else sellPrice = highPrice;
+				if(buyPrice <= sellPrice)
+				{
+					int shares = buy.getShares();
+					if(sell.getShares() > shares)
+					{
+						sell.subtractShares(buy.getShares());
+						complete = true;
+					}
+					if(sell.getShares() == shares)
+					{
+						sellIterator.remove();
+						complete = true;
+					}
+					if(complete)
+					{
+						sell.getTrader().receiveMessage(getMessage(sell, shares, sellPrice));
+						buy.getTrader().receiveMessage(getMessage(buy, shares, sellPrice));
+						buyIterator.remove();
+					}
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Generates a message to send to a trader when one of their orders has been completed.
+	 */
+	private String getMessage(TradeOrder order, int shares, double price)
+	{
+		String msg = "You ";
+		if(order.isBuy()) msg += " bought ";
+		else msg += " sold ";
+		msg += shares + " " + symbol + " at " + price + " amt " + (price * shares);
+		return msg;
 	}
 }
