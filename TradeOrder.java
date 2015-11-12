@@ -8,7 +8,7 @@
 
 public class TradeOrder {
 	Trader trader;
-	java.lang.String symbol;
+	String symbol;
 	boolean buyOrder;
 	boolean marketOrder;
 	int shares;
@@ -17,7 +17,7 @@ public class TradeOrder {
 	/*
 	 * Constructor that takes in the trader, symbol, price, number of shares, whether or not it is a buy order, and whether or not it is a market order
 	 */
-	TradeOrder(Trader trader, java.lang.String symbol, 
+	TradeOrder(Trader trader, String symbol, 
 			boolean buyOrder, boolean marketOrder, int numShares, double price)
 	{
 	   this.trader = trader;
