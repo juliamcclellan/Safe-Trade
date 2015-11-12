@@ -69,7 +69,7 @@ public class Stock {
 		if(lowSell == null)
 			lowestSell = "Ask: none";
 		else
-			lowestSell = "Ask: " + highBuy.getPrice() + "size: " + highBuy.getShares();
+			lowestSell = "Ask: " + lowSell.getPrice() + "size: " + lowSell.getShares();
 		return name + " (" + symbol + ")\nPrice: " + lastPrice + " hi: " + highPrice + " lo: " + lowPrice
 				+ " vol: " + volume + "\n" + highestBuy + " " + lowestSell;
 	}
@@ -102,17 +102,22 @@ public class Stock {
 	private void executeOrders()
 	{
 		if(sellOrders.size() == 0 || buyOrders.size() == 0) return;
-		
 		Iterator<TradeOrder> buyIterator = buyOrders.iterator();
-		for(TradeOrder buy = buyIterator.next(); buyIterator.hasNext() && sellOrders.size() != 0; buy = buyIterator.next())
+		boolean firstB = true;
+		while(firstB || buyIterator.hasNext() && sellOrders.size() != 0)
 		{
+			TradeOrder buy = buyIterator.next();
+			firstB = false;
 			double buyPrice;
 			if(buy.isLimit()) buyPrice = buy.getPrice();
 			else buyPrice = lowPrice;
 			boolean complete = false;
 			Iterator<TradeOrder> sellIterator = sellOrders.iterator();
-			for(TradeOrder sell = sellIterator.next(); sellIterator.hasNext() && !complete; sell = sellIterator.next())
+			boolean firstS = true;
+			while(firstS || sellIterator.hasNext())
 			{
+				TradeOrder sell = sellIterator.next();
+				firstS = false;
 				double sellPrice;
 				if(sell.isLimit()) sellPrice = sell.getPrice();
 				else sellPrice = highPrice;
