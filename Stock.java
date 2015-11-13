@@ -123,21 +123,29 @@ public class Stock {
 				else sellPrice = highPrice;
 				if(buyPrice <= sellPrice)
 				{
-					int shares = buy.getShares();
-					if(sell.getShares() > shares)
+					int buyShares = buy.getShares();
+					int sellShares = sell.getShares();
+					if(sellShares > buyShares)
 					{
-						sell.subtractShares(buy.getShares());
+						sell.subtractShares(buyShares);
 						complete = true;
 					}
-					if(sell.getShares() == shares)
+					else if(sellShares == buyShares)
 					{
 						sellIterator.remove();
 						complete = true;
 					}
+					else
+					{
+						buy.subtractShares(sellShares);
+						sellIterator.remove();
+						sell.getTrader().receiveMessage(getMessage(sell, sellShares, sellPrice));
+						buy.getTrader().receiveMessage(getMessage(buy, sellShares, sellPrice));
+					}
 					if(complete)
 					{
-						sell.getTrader().receiveMessage(getMessage(sell, shares, sellPrice));
-						buy.getTrader().receiveMessage(getMessage(buy, shares, sellPrice));
+						sell.getTrader().receiveMessage(getMessage(sell, buyShares, sellPrice));
+						buy.getTrader().receiveMessage(getMessage(buy, buyShares, sellPrice));
 						buyIterator.remove();
 					}
 				}
