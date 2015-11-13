@@ -28,8 +28,8 @@ public class Stock {
 		this.highPrice = price;
 		this.lastPrice = price;
 		this.volume = 0;
-		this.sellOrders = new PriorityQueue<TradeOrder>(new PriceComparator(false));
-		this.buyOrders = new PriorityQueue<TradeOrder>(new PriceComparator(true));
+		this.sellOrders = new PriorityQueue<TradeOrder>(1, new PriceComparator(true));
+		this.buyOrders = new PriorityQueue<TradeOrder>(1, new PriceComparator(false));
 	}
 	
 	/*
@@ -102,54 +102,23 @@ public class Stock {
 	private void executeOrders()
 	{
 		if(sellOrders.size() == 0 || buyOrders.size() == 0) return;
-		Iterator<TradeOrder> buyIterator = buyOrders.iterator();
-		boolean firstB = true;
-		while(firstB || buyIterator.hasNext() && sellOrders.size() != 0)
-		{
-			TradeOrder buy = buyIterator.next();
-			firstB = false;
-			double buyPrice;
-			if(buy.isLimit()) buyPrice = buy.getPrice();
-			else buyPrice = lowPrice;
-			boolean complete = false;
-			Iterator<TradeOrder> sellIterator = sellOrders.iterator();
-			boolean firstS = true;
-			while(firstS || sellIterator.hasNext())
-			{
-				TradeOrder sell = sellIterator.next();
-				firstS = false;
-				double sellPrice;
-				if(sell.isLimit()) sellPrice = sell.getPrice();
-				else sellPrice = highPrice;
-				if(buyPrice <= sellPrice)
-				{
-					int buyShares = buy.getShares();
-					int sellShares = sell.getShares();
-					if(sellShares > buyShares)
-					{
-						sell.subtractShares(buyShares);
-						complete = true;
-					}
-					else if(sellShares == buyShares)
-					{
-						sellIterator.remove();
-						complete = true;
-					}
-					else
-					{
-						buy.subtractShares(sellShares);
-						sellIterator.remove();
-						sell.getTrader().receiveMessage(getMessage(sell, sellShares, sellPrice));
-						buy.getTrader().receiveMessage(getMessage(buy, sellShares, sellPrice));
-					}
-					if(complete)
-					{
-						sell.getTrader().receiveMessage(getMessage(sell, buyShares, sellPrice));
-						buy.getTrader().receiveMessage(getMessage(buy, buyShares, sellPrice));
-						buyIterator.remove();
-					}
-				}
-			}
+		TradeOrder buy = buyOrders.peek();
+		TradeOrder sell = sellOrders.peek();
+		double buyPrice, sellPrice;
+		if(buy.isMarket()) buyPrice = highPrice;
+		else buyPrice = buy.getPrice();
+		if(sell.isMarket()) sellPrice = lowPrice;
+		else sellPrice = sell.getPrice();
+		if(sellPrice <= buyPrice){
+			int shares = Math.min(sell.getShares(), buy.getShares());
+			sell.subtractShares(shares);
+			buy.subtractShares(shares);
+			buy.getTrader().receiveMessage(getMessage(buy, shares, sellPrice));
+			sell.getTrader().receiveMessage(getMessage(sell, shares, sellPrice));
+			if(buy.getShares() == 0)
+				buyOrders.remove();
+			if(sell.getShares() == 0)
+				sellOrders.remove();
 		}
 	}
 	
