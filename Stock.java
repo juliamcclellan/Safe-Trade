@@ -104,21 +104,27 @@ public class Stock {
 		if(sellOrders.size() == 0 || buyOrders.size() == 0) return;
 		Iterator<TradeOrder> buyIterator = buyOrders.iterator();
 		boolean firstB = true;
+		double buyPrice;
+		boolean complete;
+		boolean firstS;
+		double sellPrice;
+		
 		while(firstB || buyIterator.hasNext() && sellOrders.size() != 0)
 		{
 			TradeOrder buy = buyIterator.next();
 			firstB = false;
-			double buyPrice;
+			
 			if(buy.isLimit()) buyPrice = buy.getPrice();
 			else buyPrice = lowPrice;
-			boolean complete = false;
+			complete = false;
 			Iterator<TradeOrder> sellIterator = sellOrders.iterator();
-			boolean firstS = true;
+			firstS = true;
+			
 			while(firstS || sellIterator.hasNext())
 			{
 				TradeOrder sell = sellIterator.next();
 				firstS = false;
-				double sellPrice;
+				
 				if(sell.isLimit()) sellPrice = sell.getPrice();
 				else sellPrice = highPrice;
 				if(buyPrice >= sellPrice)
