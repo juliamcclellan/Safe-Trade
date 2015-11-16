@@ -42,7 +42,11 @@ public class StockExchange {
 	 * Places a trade order by calling stock.placeOrder for the stock specified by the stock symbol in the trade order.
 	 */
 	public void placeOrder(TradeOrder order) {
-		stocks.get(order.getSymbol()).placeOrder(order);
+		Stock stock = stocks.get(order.getSymbol());
+		if(stock != null)
+		{
+			stock.placeOrder(order);
+		}
 	}
 	
 }
