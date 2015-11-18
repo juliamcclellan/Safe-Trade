@@ -6,6 +6,7 @@
  * Represents a stock in the SafeTrade project.
  */
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 
@@ -14,6 +15,7 @@ public class Stock {
 	private double lowPrice, highPrice, lastPrice;
 	private int volume;
 	private PriorityQueue<TradeOrder> sellOrders, buyOrders;
+	public static DecimalFormat money = new DecimalFormat("#########################0.00");
 	
 	/*
 	 * Constructs a new stock with a given symbol, company name, and starting price. Sets low price, high price, and last price to the same opening price. 
@@ -88,9 +90,15 @@ public class Stock {
 				sellOrders.add(order);
 				orderCommand = "Sell";
 			}
-			String price = "$" + order.getPrice();
-			if(price.equals("$0.0"))
-				price = "$" + lastPrice;
+			String price;
+			if(order.isMarket())
+			{
+				price = "market";
+			}
+			else
+			{
+				price = money.format(order.getPrice());
+			}
 			Trader t = order.getTrader();
 			t.receiveMessage("New Order: " + orderCommand + " " + symbol + "(" + name + ")\n" + order.getShares() + " shares at " + price);
 			executeOrders();
@@ -103,11 +111,8 @@ public class Stock {
 	{
 		if(sellOrders.size() == 0 || buyOrders.size() == 0) return;
 		Iterator<TradeOrder> buyIterator = buyOrders.iterator();
-		boolean firstB = true;
-		double buyPrice;
-		boolean complete;
-		boolean firstS;
-		double sellPrice;
+		boolean firstB = true, firstS, complete;
+		double buyPrice, sellPrice;
 		
 		while(firstB || buyIterator.hasNext() && sellOrders.size() != 0)
 		{
@@ -154,7 +159,11 @@ public class Stock {
 						buy.getTrader().receiveMessage(getMessage(buy, buyShares, sellPrice));
 						buyIterator.remove();
 					}
+					if(sellPrice > highPrice) highPrice = sellPrice;
+					if(sellPrice < lowPrice) lowPrice = sellPrice;
+					lastPrice = sellPrice;
 				}
+				else break;
 			}
 		}
 	}
@@ -167,7 +176,7 @@ public class Stock {
 		String msg = "You ";
 		if(order.isBuy()) msg += " bought ";
 		else msg += " sold ";
-		msg += shares + " " + symbol + " at " + price + " amt " + (price * shares);
+		msg += shares + " " + symbol + " at " + money.format(price) + " amt " + money.format((price * shares));
 		return msg;
 	}
 }

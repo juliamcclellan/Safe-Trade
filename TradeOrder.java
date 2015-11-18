@@ -37,7 +37,7 @@ public class TradeOrder {
 	/*
 	 * Returns the stock symbol for this trade order.
 	 */
-	public java.lang.String getSymbol() {
+	public String getSymbol() {
 		return symbol;
 	}
 	

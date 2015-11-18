@@ -47,6 +47,10 @@ public class StockExchange {
 		{
 			stock.placeOrder(order);
 		}
+		else
+		{
+			order.getTrader().receiveMessage("Not a valid symbol");
+		}
 	}
 	
 }
